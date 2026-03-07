@@ -1,0 +1,7 @@
+{
+  "name": "zenn-copilot-template",
+  "private": true,
+  "dependencies": {
+    "zenn-cli": "latest"
+  }
+}

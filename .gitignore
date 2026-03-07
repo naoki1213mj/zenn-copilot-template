@@ -1,0 +1,25 @@
+# 秘密情報
+.env
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+
+# uv
+uv.lock
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# エディタ
+*.swp
+*.swo
+
+# バックアップ
+*.bak
