@@ -40,7 +40,7 @@
 
 - Python パッケージ管理は uv（pip は使わない）
 - Node.js 側は npm を使い、公開前や変更確認では `npm run check` を流す
-- `package-lock.json` と `uv.lock` は追跡対象として扱い、依存関係を変えたら更新を含めて管理する
+- `package-lock.json` は現在の追跡対象として扱う。uv の依存関係を導入して `uv.lock` が生成されたら、無視せず依存関係の変更と一緒にコミットする
 - `uv add` でパッケージ追加
 - `.env` で環境変数管理。`.env.example` を用意
 - Azure 認証は `DefaultAzureCredential`（API キー直書き NG）
