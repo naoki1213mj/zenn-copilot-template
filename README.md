@@ -1,14 +1,26 @@
 # zenn-copilot-template
 
-GitHub Copilot のカスタム命令セット付き Zenn 技術記事テンプレート。
+GitHub Copilot 向けの Zenn 技術記事テンプレートです。記事の下書き、レビュー、ファクトチェックを同じリポジトリで回しやすくして、根拠と再現性を崩さずに書き進められる形にしています。
 
-文体の違和感を減らしつつ、根拠の薄い文章や作り話を避けて記事を書くための仕組みをまとめています。
+## 特徴
+
+- Node.js 22 以上と npm を前提に、Zenn CLI と検証コマンドをそのまま使えます
+- Zenn ライター、Zenn レビューア、ファクトチェッカーと 3 つの prompt をすぐ呼び出せます
+- `npm run check` で Copilot カスタマイズと Zenn コンテンツの確認をまとめて回せます
+- `.github/skills/zenn-writing-style/SKILL.md` を正本にして、文体とファクトチェックの判断を一か所に寄せています
+
+## 前提
+
+- Node.js 22 以上
+- npm
+- GitHub アカウント
+- GitHub Copilot を使う場合は、custom instructions、agents、prompts を読める対応環境
 
 ## 使い方
 
-### 1. テンプレートから新しいリポジトリを作る
+### テンプレートから作成する
 
-GitHub で「Use this template」を押すか:
+GitHub のテンプレート機能を使うか、`gh` から新しいリポジトリを作成します。
 
 ```bash
 gh repo create my-zenn-article --template naoki1213mj/zenn-copilot-template --public --clone
@@ -16,77 +28,83 @@ cd my-zenn-article
 npm install
 ```
 
-### 2. テーマを設定する
+### テーマを設定する
 
-以下のファイルのプレースホルダーを書き換える:
-- `.github/copilot-instructions.md` — 「現在のテーマ」とテーマ固有の知見
-- `AGENTS.md` — 「テーマ」
+最初に次の 2 か所を書き換えます。
 
-### 3. 記事を書き始める
+- `.github/copilot-instructions.md` の「現在のテーマ」と「テーマ固有の知見」
+- `AGENTS.md` の「テーマ」
+
+ここで決めたテーマを基準に、記事本文、レビュー、プロンプトの前提をそろえます。
+
+### 記事を書く
+
+依存関係を入れたあと、記事か本の下書きを作ってプレビューします。
 
 ```bash
-npx zenn new:article
-npx zenn preview
+npm install
+npm run new:article
+npm run preview
 ```
 
-### 4. Copilot Agent を活用する
+本を書く場合は `npm run new:book` を使います。
 
-VS Code の Agent ドロップダウンから:
-- Zenn ライター — 執筆・文体改善
-- Zenn レビューア — 公開前レビュー
-- ファクトチェッカー — 公式ドキュメントとの照合
+記事本文を編集するときは、詳細ルールを `.github/skills/zenn-writing-style/SKILL.md` で確認します。
 
-Prompt から:
-- `/fix-ai-style` — 文体の違和感を見直す
-- `/full-review` — フルレビュー
-- `/sns-post` — SNS 投稿文の生成
+### 公開前に確認する
 
-## 含まれるカスタム命令
+公開前はローカルで次のコマンドを流します。
 
-詳細ルールは `.github/skills/zenn-writing-style/SKILL.md` にまとめています。`.github/copilot-instructions.md`、`.github/instructions/markdown.instructions.md`、`AGENTS.md` はこの正本を短く参照する役目です。名前付き見出しを見れば、どこを読めばいいか迷いません。
-
-```
-.github/
-├── copilot-instructions.md        # 全リクエストに適用（執筆方針・コード規約）
-├── instructions/
-│   └── markdown.instructions.md   # articles/*.md に自動適用（記事編集ルール）
-├── agents/
-│   ├── zenn-writer.agent.md       # 執筆・編集エージェント
-│   ├── zenn-reviewer.agent.md     # 公開前レビューエージェント
-│   └── factchecker.agent.md       # ファクトチェックエージェント
-├── prompts/
-│   ├── fix-ai-style.prompt.md     # 文体レビュー
-│   ├── full-review.prompt.md      # フルレビュー
-│   └── sns-post.prompt.md         # SNS 投稿文生成
-└── skills/
-    └── zenn-writing-style/        # 統合スキル
+```bash
+npm run check
 ```
 
-## 執筆の流れ
+そのうえで、Zenn レビューアや `/full-review` を使って、文体と事実確認を別々に見直します。
 
-### 執筆前
+## Copilot カスタマイズ
 
-まず `.github/skills/zenn-writing-style/SKILL.md` の「使い方」と「文章の根拠」を開きます。誰向けの記事かを決めて、公式ドキュメント、リリースノート、実行メモのような一次情報を揃えてから書き始めます。
+このテンプレートの詳細ルールは `.github/skills/zenn-writing-style/SKILL.md` が正本です。`.github/copilot-instructions.md`、`AGENTS.md`、`.github/instructions/markdown.instructions.md` は運用の入口だけを短く持たせています。
 
-### 執筆中
+利用の入口は次のとおりです。
 
-事実、実測、推測、私見を混ぜないように書きます。著者本人の材料がない主観や失敗談は足しません。太字、体言止め、箇条書きも無条件に消すのではなく、続きすぎていないかを見ながら整えます。
+- Zenn ライター `/.github/agents/zenn-writer.agent.md`
+- Zenn レビューア `/.github/agents/zenn-reviewer.agent.md`
+- ファクトチェッカー `/.github/agents/factchecker.agent.md`
+- `/fix-ai-style` `/.github/prompts/fix-ai-style.prompt.md`
+- `/full-review` `/.github/prompts/full-review.prompt.md`
+- `/sns-post` `/.github/prompts/sns-post.prompt.md`
 
-### 執筆後
+## ディレクトリ構成
 
-仕上げは二段に分けます。先に「AI 文体十パターン」と「構成と情報密度」で文体を見直し、そのあとで「ファクトチェック」と「Zenn 記法と図版」を確認します。文体レビューと事実確認を分けると、禁止語を消しただけの記事で終わりにくくなります。
+| パス | 役割 |
+| --- | --- |
+| `articles/` | Zenn 記事の Markdown を置きます |
+| `books/` | Zenn 本の原稿を置きます |
+| `images/` | 記事や本で使う画像を置きます |
+| `scripts/` | 検証スクリプトを置きます |
+| `.github/` | Copilot customizations と CI を置きます |
 
-## この更新で変わったこと
+## コマンド
 
-以前のテンプレートは、まず禁止表現を削る方向に寄っていました。今回からはそこを少し改めています。
+| コマンド | 用途 |
+| --- | --- |
+| `npm run new:article` | 新しい記事を作ります |
+| `npm run new:book` | 新しい本を作ります |
+| `npm run preview` | Zenn プレビューを起動します |
+| `npm run check` | Copilot カスタマイズと Zenn コンテンツを確認します |
 
-- 禁止語を消すだけでなく、文章の根拠を確認する
-- 著者本人の材料がない主観や失敗談を補わない
-- 構成を毎回同じ型に押し込まない
-- 文体レビューと事実確認を別工程にする
+## 自動検証
 
-正直なところ、この方が公開前レビューも楽です。直す理由が言葉の好みではなく、根拠の有無で揃うからです。
+`npm run check` は `scripts/validate-customizations.mjs` と Zenn の一覧チェックをまとめて流します。GitHub Actions でも同じ系統の確認を回せるので、ローカルと PR で見ているものがずれにくい構成です。依存関係の更新は Dependabot に任せつつ、`package-lock.json` を基準に Node 側の再現性を保ちます。
+
+## 執筆方針
+
+詳しい執筆ルールは `.github/skills/zenn-writing-style/SKILL.md` を見てください。ここで外さないのは次の 3 点です。
+
+- 事実、実測、推測、私見を混ぜない
+- 架空の体験、感情、会話、未確認の結果を書かない
+- 文体の調整とファクトチェックを同じ作業にしない
 
 ## ライセンス
 
-MIT
+[MIT](./LICENSE)

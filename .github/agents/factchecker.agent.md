@@ -1,7 +1,7 @@
 ---
 name: ファクトチェッカー
 description: "技術記事のファクトチェック専門。公式ドキュメント・GitHub・PyPI と照合して事実誤認を検出する。"
-tools: ['codebase', 'search', 'fetch', 'runCommands']
+tools: ['search', 'shell', 'web/fetch']
 argument-hint: "チェック対象の記事ファイルパス、または確認したい製品名・バージョンを指定してください"
 ---
 

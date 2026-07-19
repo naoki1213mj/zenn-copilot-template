@@ -1,7 +1,7 @@
 ---
 description: "記事の AI 文体を整えつつ、根拠と書き手の声を崩さずに改善する"
 agent: 'agent'
-tools: ['codebase']
+tools: ['edit', 'search']
 ---
 
 以下の記事から AI っぽい違和感を減らしつつ、意味・事実・書き手の温度を保ったまま改善してください。

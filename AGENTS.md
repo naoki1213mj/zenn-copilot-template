@@ -8,19 +8,20 @@ Zenn 技術記事の検証・執筆プロジェクト。
 ## 構造
 
 ```
-articles/        — Zenn 記事 Markdown
-scripts/         — 検証スクリプト
-images/          — 記事用画像
-.github/skills/  — 統合スキル（zenn-writing-style）
-.github/agents/  — カスタムエージェント
-.github/prompts/ — 再利用可能プロンプト
+articles/        Zenn 記事
+books/           Zenn 本
+images/          記事用画像
+scripts/         検証スクリプト
+.github/         Copilot customizations と CI
 ```
 
 ## コマンド
 
 ```bash
-npx zenn preview                   # 記事プレビュー localhost:8000
-npx zenn new:article               # 新規記事
+npm run new:article
+npm run new:book
+npm run preview
+npm run check
 ```
 
 ## 判断の拠り所

@@ -1,7 +1,7 @@
 ---
 description: "記事の公開前フルレビュー（構成・ファクトチェック・文体・コード検証を一括実行）"
 agent: 'agent'
-tools: ['search', 'fetch', 'codebase', 'runCommands']
+tools: ['search', 'shell', 'web/fetch']
 ---
 
 以下の記事を公開前の品質チェックとしてフルレビューしてください。

@@ -1,7 +1,7 @@
 ---
 name: Zenn レビューア
 description: "Zenn 記事の公開前レビュー。ファクトチェック・コード検証・文体・Zenn 記法を横断チェックし、スコアカードを出力する。"
-tools: ['codebase', 'search', 'runCommands', 'fetch']
+tools: ['search', 'shell', 'web/fetch']
 argument-hint: "レビュー対象の記事ファイルパスを指定してください"
 handoffs:
   - label: 文体を直す

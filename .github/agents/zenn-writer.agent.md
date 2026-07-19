@@ -1,7 +1,7 @@
 ---
 name: Zenn ライター
 description: "Zenn 技術記事の執筆・編集モード。AI文体を排除し、現場エンジニアの個人ブログトーンで記事を書く・直す。"
-tools: ['codebase', 'search', 'runCommands', 'changes']
+tools: ['edit', 'search', 'shell']
 argument-hint: "記事ファイルパスを指定するか、改善してほしい箇所を伝えてください"
 ---
 

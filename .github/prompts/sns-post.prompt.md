@@ -1,7 +1,7 @@
 ---
 description: "Zenn 記事公開時の SNS 投稿文（LinkedIn + X）を生成する"
 agent: 'agent'
-tools: ['codebase']
+tools: ['search']
 ---
 
 以下の記事の公開に合わせて、LinkedIn 用と X 用の投稿文を作ってください。
