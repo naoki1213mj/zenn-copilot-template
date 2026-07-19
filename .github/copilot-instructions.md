@@ -9,11 +9,11 @@
 
 ## 環境
 
-ローカル（Mac/Windows）で記事を書く。必要に応じて Azure VM でコードを検証する。
+ローカル（Mac/Windows）で記事を書く。Node.js 22 以上と npm を前提に Zenn CLI を動かす。必要に応じて Azure VM でコードを検証する。
 
 ## 統合スキル
 
-記事に関わる作業では `.github/skills/zenn-writing-style/SKILL.md` を正本として参照する。判断に迷ったら「使い方」「文章の根拠」「AI 文体十パターン」「構成と情報密度」「Zenn 記法と図版」「ファクトチェック」を見る。
+記事に関わる作業では `.github/skills/zenn-writing-style/SKILL.md` を正本として参照する。このファイルでは運用上の前提だけを扱い、詳細な文体ルールやレビュー観点は正本へ寄せる。判断に迷ったら「使い方」「文章の根拠」「AI 文体十パターン」「構成と情報密度」「Zenn 記法と図版」「ファクトチェック」を見る。
 
 ## 言語・執筆方針
 
@@ -39,6 +39,8 @@
 ## コード規約
 
 - Python パッケージ管理は uv（pip は使わない）
+- Node.js 側は npm を使い、公開前や変更確認では `npm run check` を流す
+- `package-lock.json` と `uv.lock` は追跡対象として扱い、依存関係を変えたら更新を含めて管理する
 - `uv add` でパッケージ追加
 - `.env` で環境変数管理。`.env.example` を用意
 - Azure 認証は `DefaultAzureCredential`（API キー直書き NG）
