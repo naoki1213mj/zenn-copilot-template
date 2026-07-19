@@ -1,25 +1,27 @@
-# 秘密情報
+# Secrets
 .env
+.env.*
+!.env.example
 
 # Python
 __pycache__/
 *.pyc
 .pytest_cache/
+.ruff_cache/
 .venv/
+.coverage
+htmlcov/
 
-# uv
-uv.lock
-
-# Node
+# Node.js
 node_modules/
 
 # OS
 .DS_Store
 Thumbs.db
 
-# エディタ
+# Editor temporary files
 *.swp
 *.swo
 
-# バックアップ
+# Backup files
 *.bak
