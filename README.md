@@ -1,7 +1,5 @@
 # zenn-copilot-template
 
-概要
-
 GitHub Copilot 向けの Zenn 技術記事テンプレートです。記事の下書き、レビュー、ファクトチェックを同じリポジトリで回しやすくして、根拠と再現性を崩さずに書き進められる形にしています。
 
 ## 特徴
@@ -9,7 +7,6 @@ GitHub Copilot 向けの Zenn 技術記事テンプレートです。記事の�
 - Node.js 22 以上と npm を前提に、Zenn CLI と検証コマンドをそのまま使えます
 - Zenn ライター、Zenn レビューア、ファクトチェッカーと 3 つの prompt をすぐ呼び出せます
 - `npm run check` で Copilot カスタマイズと Zenn コンテンツの確認をまとめて回せます
-
 - `.github/skills/zenn-writing-style/SKILL.md` を正本にして、文体とファクトチェックの判断を一か所に寄せています
 
 ## 前提

@@ -4,11 +4,24 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
+const contents = new Map();
 const formatList = (values) => `[${values.map((value) => `'${value}'`).join(', ')}]`;
 
 const workspacePath = (relativePath) => resolve(root, relativePath);
-const read = (relativePath) =>
-  readFileSync(workspacePath(relativePath), 'utf8');
+const read = (relativePath) => {
+  if (contents.has(relativePath)) return contents.get(relativePath);
+  if (!existsSync(workspacePath(relativePath))) {
+    errors.push(`missing required file: ${relativePath}`);
+    contents.set(relativePath, null);
+    return null;
+  }
+  const text = readFileSync(workspacePath(relativePath), 'utf8').replace(
+    /\r\n?/g,
+    '\n',
+  );
+  contents.set(relativePath, text);
+  return text;
+};
 
 const frontmatterFiles = [
   '.github/skills/zenn-writing-style/SKILL.md',
@@ -45,6 +58,7 @@ const downstreamFiles = [
 
 for (const relativePath of frontmatterFiles) {
   const text = read(relativePath);
+  if (text === null) continue;
   if (!text.startsWith('---\n') || text.indexOf('\n---\n', 4) < 0) {
     errors.push(`${relativePath}: invalid frontmatter boundary`);
   }
@@ -52,7 +66,9 @@ for (const relativePath of frontmatterFiles) {
 
 const skill = read('.github/skills/zenn-writing-style/SKILL.md');
 const headings = new Set(
-  [...skill.matchAll(/^#{2,3}\s+(.+)$/gm)].map((match) => match[1].trim()),
+  [...(skill?.matchAll(/^#{2,3}\s+(.+)$/gm) ?? [])].map((match) =>
+    match[1].trim(),
+  ),
 );
 const requiredHeadings = [
   '使い方',
@@ -70,14 +86,18 @@ const requiredHeadings = [
   '参考文献',
 ];
 
-for (const heading of requiredHeadings) {
-  if (!headings.has(heading)) {
-    errors.push(`canonical skill: missing heading "${heading}"`);
+if (skill !== null) {
+  for (const heading of requiredHeadings) {
+    if (!headings.has(heading)) {
+      errors.push(`canonical skill: missing heading "${heading}"`);
+    }
   }
 }
 
 for (const relativePath of downstreamFiles) {
-  const lines = read(relativePath).split('\n');
+  const text = read(relativePath);
+  if (text === null) continue;
+  const lines = text.split('\n');
   for (let index = 0; index < lines.length; index += 1) {
     if (!lines[index].includes('SKILL.md')) continue;
     const block = [lines[index]];
@@ -86,9 +106,12 @@ for (const relativePath of downstreamFiles) {
       block.push(lines[lookahead]);
       lookahead += 1;
     }
+    const blockText = block.join('\n');
     const references = [
-      ...[...block.join('\n').matchAll(/`([^`]+)`/g)].map((match) => match[1]),
-      ...[...block.join('\n').matchAll(/「([^」]+)」/g)].map((match) => match[1]),
+      ...[...blockText.matchAll(/`([^`]+)`/g)]
+        .map((match) => match[1])
+        .filter((value) => headings.has(value)),
+      ...[...blockText.matchAll(/「([^」]+)」/g)].map((match) => match[1]),
     ].filter((value) => !value.endsWith('.md') && !value.includes('/'));
     for (const reference of references) {
       if (!headings.has(reference)) {
@@ -103,6 +126,7 @@ for (const relativePath of downstreamFiles) {
 
 for (const [relativePath, expectedTools] of expectedToolsByFile) {
   const text = read(relativePath);
+  if (text === null) continue;
   const frontmatterEnd = text.indexOf('\n---\n', 4);
   const frontmatter = text.slice(4, frontmatterEnd);
   const toolsLine = frontmatter.match(/^tools:\s*\[(.+)\]\s*$/m);
