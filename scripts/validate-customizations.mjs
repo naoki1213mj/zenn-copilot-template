@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const errors = [];
+const formatList = (values) => `[${values.map((value) => `'${value}'`).join(', ')}]`;
 
 const workspacePath = (relativePath) => resolve(root, relativePath);
 const read = (relativePath) =>
@@ -20,14 +21,14 @@ const frontmatterFiles = [
   '.github/prompts/sns-post.prompt.md',
 ];
 
-const toolFiles = [
-  '.github/agents/zenn-writer.agent.md',
-  '.github/agents/zenn-reviewer.agent.md',
-  '.github/agents/factchecker.agent.md',
-  '.github/prompts/fix-ai-style.prompt.md',
-  '.github/prompts/full-review.prompt.md',
-  '.github/prompts/sns-post.prompt.md',
-];
+const expectedToolsByFile = new Map([
+  ['.github/agents/zenn-writer.agent.md', ['edit', 'search', 'shell']],
+  ['.github/agents/zenn-reviewer.agent.md', ['search', 'shell', 'web/fetch']],
+  ['.github/agents/factchecker.agent.md', ['search', 'shell', 'web/fetch']],
+  ['.github/prompts/fix-ai-style.prompt.md', ['edit', 'search']],
+  ['.github/prompts/full-review.prompt.md', ['search', 'shell', 'web/fetch']],
+  ['.github/prompts/sns-post.prompt.md', ['search']],
+]);
 
 const downstreamFiles = [
   '.github/copilot-instructions.md',
@@ -76,11 +77,18 @@ for (const heading of requiredHeadings) {
 }
 
 for (const relativePath of downstreamFiles) {
-  for (const line of read(relativePath).split('\n')) {
-    if (!line.includes('SKILL.md')) continue;
+  const lines = read(relativePath).split('\n');
+  for (let index = 0; index < lines.length; index += 1) {
+    if (!lines[index].includes('SKILL.md')) continue;
+    const block = [lines[index]];
+    let lookahead = index + 1;
+    while (lookahead < lines.length && lines[lookahead].trim() !== '') {
+      block.push(lines[lookahead]);
+      lookahead += 1;
+    }
     const references = [
-      ...[...line.matchAll(/`([^`]+)`/g)].map((match) => match[1]),
-      ...[...line.matchAll(/「([^」]+)」/g)].map((match) => match[1]),
+      ...[...block.join('\n').matchAll(/`([^`]+)`/g)].map((match) => match[1]),
+      ...[...block.join('\n').matchAll(/「([^」]+)」/g)].map((match) => match[1]),
     ].filter((value) => !value.endsWith('.md') && !value.includes('/'));
     for (const reference of references) {
       if (!headings.has(reference)) {
@@ -89,17 +97,11 @@ for (const relativePath of downstreamFiles) {
         );
       }
     }
+    index = lookahead - 1;
   }
 }
 
-const forbiddenToolIds = new Set([
-  'codebase',
-  'runCommands',
-  'fetch',
-  'changes',
-]);
-
-for (const relativePath of toolFiles) {
+for (const [relativePath, expectedTools] of expectedToolsByFile) {
   const text = read(relativePath);
   const frontmatterEnd = text.indexOf('\n---\n', 4);
   const frontmatter = text.slice(4, frontmatterEnd);
@@ -108,13 +110,16 @@ for (const relativePath of toolFiles) {
     errors.push(`${relativePath}: missing tools list`);
     continue;
   }
-  const tools = [...toolsLine[1].matchAll(/['"]([^'"]+)['"]/g)].map(
+  const actualTools = [...toolsLine[1].matchAll(/['"]([^'"]+)['"]/g)].map(
     (match) => match[1],
   );
-  for (const tool of tools) {
-    if (forbiddenToolIds.has(tool)) {
-      errors.push(`${relativePath}: legacy tool ID "${tool}"`);
-    }
+  const matchesExpected =
+    actualTools.length === expectedTools.length &&
+    expectedTools.every((tool, index) => actualTools[index] === tool);
+  if (!matchesExpected) {
+    errors.push(
+      `${relativePath}: expected tools ${formatList(expectedTools)}, actual tools ${formatList(actualTools)}`,
+    );
   }
 }
 
