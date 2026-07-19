@@ -12,7 +12,9 @@
     "preview": "zenn preview",
     "list:articles": "zenn list:articles",
     "list:books": "zenn list:books",
-    "check:zenn": "npm run list:articles && npm run list:books"
+    "check:zenn": "npm run list:articles && npm run list:books",
+    "check:customizations": "node scripts/validate-customizations.mjs",
+    "check": "npm run check:customizations && npm run check:zenn"
   },
   "dependencies": {
     "zenn-cli": "0.5.2"
