@@ -6,7 +6,7 @@ applyTo: "articles/**/*.md"
 
 # Zenn 記事 Markdown ルール
 
-記事を編集するときは `.github/skills/zenn-writing-style/SKILL.md` を正本として参照する。特に「使い方」「文章の根拠」「AI 文体十パターン」「構成と情報密度」「Zenn 記法と図版」「ファクトチェック」を前提にする。
+記事を編集するときは `.github/skills/zenn-writing-style/SKILL.md` を正本として参照する。特に「使い方」「文章の根拠」「論証の厳密さ」「AI 文体十パターン」「構成と情報密度」「Zenn 記法と図版」「ファクトチェック」を前提にする。
 
 ## 執筆方針
 
