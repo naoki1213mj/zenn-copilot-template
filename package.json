@@ -17,6 +17,6 @@
     "check": "npm run check:customizations && npm run check:zenn"
   },
   "dependencies": {
-    "zenn-cli": "0.5.2"
+    "zenn-cli": "0.5.11"
   }
 }
